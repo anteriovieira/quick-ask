@@ -11,6 +11,10 @@ A Chrome extension that lets you select any text on a webpage and instantly ask 
 - 🔒 **Secure**: Your API key is stored locally using Chrome's secure storage
 - ⌨️ **Keyboard Shortcut**: Press `Ctrl+K` (or `Cmd+K` on Mac) to quickly open the chat
 
+
+| <img width="722" height="536" alt="image" src="https://github.com/user-attachments/assets/99e52f37-8bfd-42ca-9c33-5fc86aff60fd" /> | <img width="511" height="691" alt="image" src="https://github.com/user-attachments/assets/7a7d5de2-096e-4ff1-85ba-6f74bdf360af" /> |
+|---|---|
+
 ## Installation
 
 ### From Source
