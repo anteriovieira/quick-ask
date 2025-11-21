@@ -41,10 +41,25 @@ export function BrowserSimulation() {
             // 3. Click button / Open panel
             setShowQuickAsk(false)
             setShowPanel(true)
-            await new Promise((r) => setTimeout(r, 500))
 
-            // 4. Add user message (context)
-            setMessages([{ role: "user", content: "Explain the concept of 'Agentic AI' based on this text." }])
+            // Initial chat state (Selected text + Welcome)
+            setMessages([
+                {
+                    role: "user",
+                    content: "\"The next frontier is Agentic AI. These are systems designed not just to respond to inputs, but to actively perceive their environment, reason about it, and take actions to achieve specific goals.\""
+                },
+                {
+                    role: "ai",
+                    content: "Hello! I see you selected some text. How can I help you with it?"
+                }
+            ])
+            await new Promise((r) => setTimeout(r, 1000))
+
+            // 4. Add user message (action)
+            setMessages((prev) => [
+                ...prev,
+                { role: "user", content: "Explain it" }
+            ])
             await new Promise((r) => setTimeout(r, 800))
 
             // 5. AI typing
@@ -159,18 +174,12 @@ export function BrowserSimulation() {
                                 animate={{ x: 0 }}
                                 exit={{ x: "100%" }}
                                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                                className="absolute top-0 right-0 w-[350px] h-full bg-background border-l shadow-xl flex flex-col z-20 font-sans"
+                                className="absolute top-0 right-0 w-[350px] h-[96%] bg-background border shadow-xl flex flex-col z-20 font-sans rounded-lg m-2 overflow-hidden"
                             >
-                                {/* Panel Header */}
-                                <div className="p-3 border-b flex items-center justify-between bg-background">
-                                    <div className="flex items-center gap-2 font-medium text-sm">
-                                        <svg viewBox="0 0 24 24" className="w-[18px] h-[18px] fill-muted-foreground"><path d="M12 2L14.5 9L22 12L14.5 15L12 22L9.5 15L2 12L9.5 9L12 2Z" /></svg>
-                                        Quick Ask
-                                    </div>
-                                </div>
+
 
                                 {/* Chat Area */}
-                                <ScrollArea className="flex-1 p-4 bg-background">
+                                <ScrollArea className="flex-1 p-4 bg-background h-[78%]">
                                     <div className="space-y-3">
                                         {messages.map((msg, i) => (
                                             <motion.div
@@ -206,28 +215,33 @@ export function BrowserSimulation() {
                                 </ScrollArea>
 
                                 {/* Quick Actions */}
-                                <div className="px-4 py-2 border-t bg-background flex gap-2 overflow-x-auto no-scrollbar">
+                                <div className="px-4 py-4 pb-2 border-t bg-background flex gap-2">
                                     {["Explain it", "Summarize", "Translate"].map((action) => (
-                                        <button key={action} className="px-3 py-1.5 bg-muted/50 hover:bg-muted text-xs rounded-full border transition-colors whitespace-nowrap">
-                                            {action}
-                                        </button>
+                                        <div key={action} className="inline-flex items-center bg-muted/50 border rounded-[16px] overflow-hidden transition-colors hover:bg-muted hover:border-blue-500/50 group h-[32px]">
+                                            <button className="pl-3 pr-1 py-1 text-[13px] text-foreground/90 whitespace-nowrap h-full flex items-center">
+                                                {action}
+                                            </button>
+                                            <button className="pr-2 pl-1 h-full flex items-center justify-center text-muted-foreground hover:text-red-500 hover:bg-red-500/10 transition-colors">
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </div>
                                     ))}
                                 </div>
 
                                 {/* Input Area */}
-                                <div className="p-4 bg-background">
-                                    <div className="relative flex items-center gap-2 p-2 border rounded-[24px] bg-muted/30 focus-within:bg-background focus-within:border-[#1a73e8] focus-within:ring-1 focus-within:ring-[#1a73e8] transition-all">
-                                        <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full text-muted-foreground shrink-0">
+                                <div className="p-3 px-4 bg-background">
+                                    <div className="relative flex items-center gap-2 p-2 pl-4 border rounded-[24px] bg-muted/30 focus-within:bg-background focus-within:border-[#1a73e8] focus-within:ring-1 focus-within:ring-[#1a73e8] transition-all shadow-sm">
+                                        <Input
+                                            placeholder="Ask a question..."
+                                            className="border-none bg-transparent p-0 h-auto shadow-none focus-visible:ring-0 text-sm placeholder:text-muted-foreground/70 outline-none"
+                                        />
+                                        <Button size="icon" variant="ghost" className="h-8 w-8 rounded-full text-muted-foreground shrink-0 hover:text-foreground">
                                             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                                             </svg>
                                         </Button>
-                                        <Input
-                                            placeholder="Ask a follow-up..."
-                                            className="border-0 bg-transparent p-0 h-auto focus-visible:ring-0 text-sm placeholder:text-muted-foreground/70"
-                                        />
-                                        <Button size="icon" className="h-8 w-8 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] text-white shrink-0">
+                                        <Button size="icon" className="h-8 w-8 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] text-white shrink-0 shadow-sm transition-transform active:scale-95">
                                             <Send className="w-4 h-4" />
                                         </Button>
                                     </div>
