@@ -52,8 +52,6 @@ const DEFAULT_ACTIONS = [
     "Explain it",
     "Fix typo",
     "Summarize",
-    "Make it shorter",
-    "Make it longer"
 ];
 
 let customActions = [];

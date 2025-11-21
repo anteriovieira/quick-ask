@@ -198,12 +198,14 @@ async function openSidePanel(tabId) {
 
 async function handleAskAI(request, sendResponse) {
     try {
-        const { openaiApiKey } = await chrome.storage.sync.get('openaiApiKey');
+        const { openaiApiKey, systemPrompt } = await chrome.storage.sync.get(['openaiApiKey', 'systemPrompt']);
 
         if (!openaiApiKey) {
             sendResponse({ error: 'Please set your OpenAI API Key in the extension options.' });
             return;
         }
+
+        const finalSystemPrompt = systemPrompt || 'You are a helpful assistant. The user will provide a text selection and a question about it. Answer the question based on the text provided, but you can also use your general knowledge if needed. Be concise.';
 
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
@@ -216,7 +218,7 @@ async function handleAskAI(request, sendResponse) {
                 messages: [
                     {
                         role: 'system',
-                        content: 'You are a helpful assistant. The user will provide a text selection and a question about it. Answer the question based on the text provided, but you can also use your general knowledge if needed. Be concise.'
+                        content: finalSystemPrompt
                     },
                     {
                         role: 'user',
