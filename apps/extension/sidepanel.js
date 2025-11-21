@@ -105,29 +105,23 @@ function setupAddCustomAction() {
 
 function addCustomAction() {
     const actionName = questionInput.value;
-    console.log('addCustomAction called. Value:', actionName);
 
     if (actionName && actionName.trim()) {
         const trimmedName = actionName.trim();
-        console.log('Trimmed name:', trimmedName);
 
         // Check if action already exists (in custom or default)
         if (customActions.includes(trimmedName) || DEFAULT_ACTIONS.includes(trimmedName)) {
-            console.warn('Action already exists:', trimmedName);
             // Optional: Show some feedback that it already exists
             return;
         }
 
-        console.log('Adding action:', trimmedName);
         customActions.push(trimmedName);
         saveCustomActions();
         renderQuickActions();
 
         // Clear input after adding
         questionInput.value = '';
-        console.log('Input cleared');
     } else {
-        console.log('Action name empty');
         // Focus input if empty to encourage typing
         questionInput.focus();
     }
