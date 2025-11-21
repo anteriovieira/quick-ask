@@ -57,8 +57,8 @@ const DEFAULT_ACTIONS = [
     "Make it longer"
 ];
 
-let customActions = [];
-const CUSTOM_ACTIONS_KEY = 'quickask_custom_actions';
+let hiddenActions = [];
+const HIDDEN_ACTIONS_KEY = 'quickask_hidden_actions';
 
 function loadCustomActions() {
     try {
@@ -66,17 +66,23 @@ function loadCustomActions() {
         if (stored) {
             customActions = JSON.parse(stored);
         }
+
+        const storedHidden = localStorage.getItem(HIDDEN_ACTIONS_KEY);
+        if (storedHidden) {
+            hiddenActions = JSON.parse(storedHidden);
+        }
     } catch (error) {
-        console.error('Error loading custom actions:', error);
+        console.error('Error loading actions:', error);
         customActions = [];
+        hiddenActions = [];
     }
 }
 
-function saveCustomActions() {
+function saveHiddenActions() {
     try {
-        localStorage.setItem(CUSTOM_ACTIONS_KEY, JSON.stringify(customActions));
+        localStorage.setItem(HIDDEN_ACTIONS_KEY, JSON.stringify(hiddenActions));
     } catch (error) {
-        console.error('Error saving custom actions:', error);
+        console.error('Error saving hidden actions:', error);
     }
 }
 
@@ -105,16 +111,18 @@ function renderQuickActions() {
 
     quickActions.innerHTML = '';
 
-    const allActions = [...DEFAULT_ACTIONS, ...customActions];
+    // Render default actions
+    DEFAULT_ACTIONS.forEach(action => {
+        if (hiddenActions.includes(action)) return;
 
-    allActions.forEach(action => {
+        const chip = document.createElement('div');
+        chip.className = 'quick-action-chip';
+
         const btn = document.createElement('button');
         btn.className = 'quick-action-btn';
         btn.setAttribute('data-action', action);
         btn.textContent = action;
         btn.addEventListener('click', () => {
-            console.log('Quick action clicked:', action);
-            console.log('Current selection:', currentSelection);
             if (currentSelection) {
                 questionInput.value = action;
                 sendMessage();
@@ -122,8 +130,78 @@ function renderQuickActions() {
                 console.warn('No text selected, cannot send message.');
             }
         });
-        quickActions.appendChild(btn);
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'quick-action-delete';
+        deleteBtn.title = 'Remove action';
+        deleteBtn.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        `;
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            removeDefaultAction(action);
+        });
+
+        chip.appendChild(btn);
+        chip.appendChild(deleteBtn);
+        quickActions.appendChild(chip);
     });
+
+    // Render custom actions
+    customActions.forEach(action => {
+        const chip = document.createElement('div');
+        chip.className = 'quick-action-chip';
+
+        const btn = document.createElement('button');
+        btn.className = 'quick-action-btn';
+        btn.setAttribute('data-action', action);
+        btn.textContent = action;
+        btn.addEventListener('click', () => {
+            if (currentSelection) {
+                questionInput.value = action;
+                sendMessage();
+            } else {
+                console.warn('No text selected, cannot send message.');
+            }
+        });
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'quick-action-delete';
+        deleteBtn.title = 'Remove action';
+        deleteBtn.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        `;
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            removeCustomAction(action);
+        });
+
+        chip.appendChild(btn);
+        chip.appendChild(deleteBtn);
+        quickActions.appendChild(chip);
+    });
+}
+
+function removeDefaultAction(action) {
+    if (confirm(`Are you sure you want to remove the default action "${action}"?`)) {
+        hiddenActions.push(action);
+        saveHiddenActions();
+        renderQuickActions();
+    }
+}
+
+function removeCustomAction(action) {
+    if (confirm(`Are you sure you want to remove the action "${action}"?`)) {
+        customActions = customActions.filter(a => a !== action);
+        saveCustomActions();
+        renderQuickActions();
+    }
 }
 
 function loadChats() {
