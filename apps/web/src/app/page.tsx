@@ -29,9 +29,12 @@ export default function Home() {
                 Star on GitHub
               </Button>
             </Link>
-            <Button size="sm" className="gap-2">
-              Download
-            </Button>
+            <Link href="https://chromewebstore.google.com/detail/donnhgglokpiabojgalipkkndhmngnnh" target="_blank">
+              <Button size="sm" className="gap-2">
+                <Chrome className="w-4 h-4" />
+                Add to Chrome
+              </Button>
+            </Link>
           </div>
         </div>
       </header>
@@ -63,10 +66,12 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" className="h-12 px-8 text-base gap-2 rounded-full">
-                <Chrome className="w-5 h-5" />
-                Add to Chrome
-              </Button>
+              <Link href="https://chromewebstore.google.com/detail/donnhgglokpiabojgalipkkndhmngnnh" target="_blank">
+                <Button size="lg" className="h-12 px-8 text-base gap-2 rounded-full">
+                  <Chrome className="w-5 h-5" />
+                  Add to Chrome
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -141,10 +146,12 @@ export default function Home() {
                   Join thousands of users who are saving time and learning faster with QuickAsk.
                   Open source and free to use.
                 </p>
-                <Button size="lg" variant="secondary" className="h-14 px-8 text-lg rounded-full gap-2">
-                  <Chrome className="w-5 h-5" />
-                  Add to Chrome - It's Free
-                </Button>
+                <Link href="https://chromewebstore.google.com/detail/donnhgglokpiabojgalipkkndhmngnnh" target="_blank">
+                  <Button size="lg" variant="secondary" className="h-14 px-8 text-lg rounded-full gap-2">
+                    <Chrome className="w-5 h-5" />
+                    Add to Chrome - It's Free
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
