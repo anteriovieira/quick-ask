@@ -1,0 +1,18 @@
+Title: Quick Ask - AI Text Assistant
+
+Short Description:
+Instantly ask AI about any selected text on the web. Explain, summarize, translate, and more with a single click.
+
+Long Description:
+Quick Ask is your intelligent browsing companion. Select any text on any webpage and instantly get answers, explanations, summaries, or translations using advanced AI.
+
+Features:
+- **Instant Answers**: Just select text and click "Ask AI" to get immediate insights.
+- **Quick Actions**: One-click buttons to Explain, Summarize, Translate, Fix Typos, and more.
+- **Custom Actions**: Create your own reusable prompts for repetitive tasks.
+- **Contextual Chat**: Have a follow-up conversation with the AI about the selected text.
+- **Side Panel Interface**: A seamless experience that doesn't block your view.
+- **Customizable System Prompt**: Tailor the AI's personality and behavior to your needs.
+- **Secure**: Uses your own OpenAI API key.
+
+Boost your productivity and understanding while browsing the web with Quick Ask.
