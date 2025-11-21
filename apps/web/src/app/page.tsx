@@ -20,13 +20,15 @@ export default function Home() {
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
             <Link href="#features" className="hover:text-foreground transition-colors">Features</Link>
             <Link href="#how-it-works" className="hover:text-foreground transition-colors">How it Works</Link>
-            <Link href="https://github.com/anteriovieira/quickask" target="_blank" className="hover:text-foreground transition-colors">GitHub</Link>
+            <Link href="https://github.com/anteriovieira/quick-ask" target="_blank" className="hover:text-foreground transition-colors">GitHub</Link>
           </nav>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" className="hidden sm:flex gap-2">
-              <Github className="w-4 h-4" />
-              Star on GitHub
-            </Button>
+            <Link href="https://github.com/anteriovieira/quick-ask" target="_blank">
+              <Button variant="outline" size="sm" className="hidden sm:flex gap-2">
+                <Github className="w-4 h-4" />
+                Star on GitHub
+              </Button>
+            </Link>
             <Button size="sm" className="gap-2">
               Download
             </Button>
@@ -64,9 +66,6 @@ export default function Home() {
               <Button size="lg" className="h-12 px-8 text-base gap-2 rounded-full">
                 <Chrome className="w-5 h-5" />
                 Add to Chrome
-              </Button>
-              <Button size="lg" variant="outline" className="h-12 px-8 text-base rounded-full">
-                View Demo
               </Button>
             </div>
           </div>
@@ -164,7 +163,7 @@ export default function Home() {
             © {new Date().getFullYear()} QuickAsk. Open Source under MIT License.
           </div>
           <div className="flex gap-6">
-            <Link href="#" className="text-muted-foreground hover:text-foreground">Privacy</Link>
+            <Link href="/privacy" className="text-muted-foreground hover:text-foreground">Privacy</Link>
             <Link href="#" className="text-muted-foreground hover:text-foreground">Terms</Link>
             <Link href="#" className="text-muted-foreground hover:text-foreground">Twitter</Link>
           </div>
