@@ -337,23 +337,30 @@ async function openSidePanel() {
             // Use a flag to prevent sending duplicate messages
             if (!window._deepAskTextSent) {
                 window._deepAskTextSent = true;
-                setTimeout(() => {
-                    console.log('DeepAsk: Sending selected text to side panel');
+
+                const sendTextToSidePanel = (retries = 3) => {
+                    console.log(`DeepAsk: Sending selected text to side panel (retries left: ${retries})`);
                     chrome.runtime.sendMessage({
                         action: 'textSelected',
                         text: currentSelection
                     }, (response) => {
                         if (chrome.runtime.lastError) {
                             console.error('DeepAsk: Error sending text to side panel:', chrome.runtime.lastError);
+                            if (retries > 0) {
+                                setTimeout(() => sendTextToSidePanel(retries - 1), 500);
+                            }
                         } else {
                             console.log('✅ DeepAsk: Text sent to side panel successfully');
                         }
-                        // Reset flag after a short delay to allow new selections
-                        setTimeout(() => {
-                            window._deepAskTextSent = false;
-                        }, 2000);
                     });
-                }, 1000);
+                };
+
+                setTimeout(() => sendTextToSidePanel(), 500);
+
+                // Reset flag after a short delay to allow new selections
+                setTimeout(() => {
+                    window._deepAskTextSent = false;
+                }, 3000);
             }
         });
     } catch (error) {

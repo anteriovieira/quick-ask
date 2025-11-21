@@ -219,6 +219,17 @@
             opacity: 1;
         }
 
+        .input-icon-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+        }
+
         .send-btn {
             background: var(--accent-blue);
             color: var(--bg-primary);
@@ -336,7 +347,7 @@
             <p>Select any text on the page and click "Ask AI" to start asking questions about it.</p>
         </div>
     </div>
-    <div class="quick-actions" id="quickActions" style="display: none;">
+    <div class="quick-actions" id="quickActions">
         <button class="quick-action-btn" data-action="Answer that">Answer that</button>
         <button class="quick-action-btn" data-action="Explain it">Explain it</button>
         <button class="quick-action-btn" data-action="Translate">Translate</button>
@@ -347,19 +358,14 @@
     </div>
     <div class="input-area">
         <div class="input-wrapper">
-            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
             <input type="text" class="input" id="questionInput" placeholder="Ask a question..." disabled>
-            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                <line x1="12" y1="19" x2="12" y2="23"></line>
-                <line x1="8" y1="23" x2="16" y2="23"></line>
-            </svg>
+            <button class="input-icon-btn" id="addCustomActionBtn" title="Add custom action">
+                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+            </button>
             <button class="send-btn" id="sendBtn" disabled>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                     stroke-linejoin="round">

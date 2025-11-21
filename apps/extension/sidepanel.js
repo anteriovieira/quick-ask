@@ -22,16 +22,21 @@ function init() {
     setupChat();
 
     // Quick action buttons
-    setupQuickActions();
+    loadCustomActions();
+    renderQuickActions();
+    setupAddCustomAction();
 
     // New chat buttons
-    setupNewChatButtons();
+    // setupNewChatButtons();
 
     // Listen for messages from content script
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === 'textSelected') {
-            // Only handle if it's a new selection
-            if (request.text && request.text !== lastHandledText) {
+            // Handle if it's a new selection OR if the current chat is empty (retry)
+            const chat = chats.find(c => c.id === activeChat);
+            const isChatEmpty = !chat || chat.messages.length === 0;
+
+            if (request.text && (request.text !== lastHandledText || isChatEmpty)) {
                 handleTextSelected(request.text);
             }
             sendResponse({ success: true });
@@ -42,17 +47,83 @@ function init() {
     checkForExistingSelection();
 }
 
-function setupNewChatButtons() {
-    const newChatBtn = document.getElementById('newChatBtn');
-    const newChatIcon = document.getElementById('newChatIcon');
+const DEFAULT_ACTIONS = [
+    "Answer that",
+    "Explain it",
+    "Translate",
+    "Fix typo",
+    "Summarize",
+    "Make it shorter",
+    "Make it longer"
+];
 
-    if (newChatBtn) {
-        newChatBtn.addEventListener('click', createNewChat);
-    }
+let customActions = [];
+const CUSTOM_ACTIONS_KEY = 'quickask_custom_actions';
 
-    if (newChatIcon) {
-        newChatIcon.addEventListener('click', createNewChat);
+function loadCustomActions() {
+    try {
+        const stored = localStorage.getItem(CUSTOM_ACTIONS_KEY);
+        if (stored) {
+            customActions = JSON.parse(stored);
+        }
+    } catch (error) {
+        console.error('Error loading custom actions:', error);
+        customActions = [];
     }
+}
+
+function saveCustomActions() {
+    try {
+        localStorage.setItem(CUSTOM_ACTIONS_KEY, JSON.stringify(customActions));
+    } catch (error) {
+        console.error('Error saving custom actions:', error);
+    }
+}
+
+function setupAddCustomAction() {
+    const addBtn = document.getElementById('addCustomActionBtn');
+    if (addBtn) {
+        addBtn.addEventListener('click', addCustomAction);
+    }
+}
+
+function addCustomAction() {
+    const actionName = prompt("Enter the name for the new action:");
+    if (actionName && actionName.trim()) {
+        const trimmedName = actionName.trim();
+        if (!customActions.includes(trimmedName) && !DEFAULT_ACTIONS.includes(trimmedName)) {
+            customActions.push(trimmedName);
+            saveCustomActions();
+            renderQuickActions();
+        }
+    }
+}
+
+function renderQuickActions() {
+    const quickActions = document.getElementById('quickActions');
+    if (!quickActions) return;
+
+    quickActions.innerHTML = '';
+
+    const allActions = [...DEFAULT_ACTIONS, ...customActions];
+
+    allActions.forEach(action => {
+        const btn = document.createElement('button');
+        btn.className = 'quick-action-btn';
+        btn.setAttribute('data-action', action);
+        btn.textContent = action;
+        btn.addEventListener('click', () => {
+            console.log('Quick action clicked:', action);
+            console.log('Current selection:', currentSelection);
+            if (currentSelection) {
+                questionInput.value = action;
+                sendMessage();
+            } else {
+                console.warn('No text selected, cannot send message.');
+            }
+        });
+        quickActions.appendChild(btn);
+    });
 }
 
 function loadChats() {
@@ -91,12 +162,12 @@ function saveChats() {
     }
 }
 
-function createNewChat() {
+function createNewChat(initialText = '') {
     const newChat = {
         id: `chat_${Date.now()}`,
         title: 'New Chat',
         messages: [],
-        selectedText: '',
+        selectedText: initialText,
         createdAt: Date.now(),
         updatedAt: Date.now()
     };
@@ -259,22 +330,6 @@ function setupChat() {
     });
 }
 
-function setupQuickActions() {
-    const quickActions = document.getElementById('quickActions');
-    const quickActionBtns = quickActions.querySelectorAll('.quick-action-btn');
-
-    quickActionBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const action = btn.getAttribute('data-action');
-            if (action && currentSelection) {
-                // Set the input value and send the message
-                questionInput.value = action;
-                sendMessage();
-            }
-        });
-    });
-}
-
 function checkForExistingSelection() {
     // Request current selection from content script via background
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -283,7 +338,9 @@ function checkForExistingSelection() {
                 action: 'getCurrentSelection',
                 tabId: tabs[0].id
             }, (response) => {
-                if (response && response.text && response.text !== lastHandledText) {
+                if (response && response.text) {
+                    // Force handle text on init, even if it matches last handled
+                    // This ensures the UI is correctly set up when opening the panel
                     handleTextSelected(response.text);
                 }
             });
@@ -292,18 +349,14 @@ function checkForExistingSelection() {
 }
 
 function handleTextSelected(text) {
-    // Prevent duplicate handling of the same text
-    if (text === lastHandledText) {
-        return;
-    }
-
+    // Update last handled text
     lastHandledText = text;
     currentSelection = text;
 
     // Create new chat if none exists or if current chat already has messages
     const chat = chats.find(c => c.id === activeChat);
     if (!chat || chat.messages.length > 0) {
-        createNewChat();
+        createNewChat(text);
     }
 
     // Update current chat
@@ -362,7 +415,12 @@ function appendMessage(text, type) {
 
 async function sendMessage() {
     const question = questionInput.value.trim();
-    if (!question || !currentSelection) return;
+    console.log('sendMessage called. Question:', question, 'Selection:', currentSelection);
+
+    if (!question || !currentSelection) {
+        console.warn('sendMessage aborted: missing question or selection');
+        return;
+    }
 
     // Add user message
     const userMsg = {
