@@ -66,7 +66,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         handleAskAI(request, sendResponse);
         return true; // Will respond asynchronously
     }
-    
+
     if (request.action === 'openSidePanel') {
         const tabId = sender.tab?.id;
         if (!tabId) {
@@ -74,7 +74,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             sendResponse({ success: false, error: 'No tab ID' });
             return;
         }
-        
+
         // Open side panel - options should already be set by onActivated/onUpdated
         // Just call open() directly in response to user gesture
         if (!chrome.sidePanel) {
@@ -82,9 +82,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             sendResponse({ success: false, error: 'Side panel API not available' });
             return;
         }
-        
+
         console.log('=== Opening side panel for tab:', tabId);
-        
+
         // Call open() directly - this must be in response to user gesture
         chrome.sidePanel.open({ tabId }).then(() => {
             console.log('✅ Side panel opened successfully');
@@ -106,10 +106,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 sendResponse({ success: false, error: retryError.message });
             });
         });
-        
+
         return true; // Will respond asynchronously
     }
-    
+
     if (request.action === 'getCurrentSelection') {
         // Forward request to content script
         chrome.tabs.sendMessage(request.tabId, { action: 'getCurrentSelection' }, (response) => {
@@ -117,7 +117,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         });
         return true;
     }
-    
+
+    if (request.action === 'openOptionsPage') {
+        chrome.runtime.openOptionsPage();
+        sendResponse({ success: true });
+        return true;
+    }
+
     if (request.action === 'textSelected') {
         // Broadcast to side panel
         chrome.runtime.sendMessage(request);
@@ -128,13 +134,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 async function openSidePanel(tabId) {
     try {
         console.log('=== Opening side panel for tab:', tabId);
-        
+
         // Check if sidePanel API is available
         if (!chrome.sidePanel) {
             console.error('Side panel API is not available. Chrome version might be too old.');
             return;
         }
-        
+
         // First, ensure side panel is enabled globally
         console.log('Setting global side panel options...');
         await chrome.sidePanel.setOptions({
@@ -142,7 +148,7 @@ async function openSidePanel(tabId) {
             enabled: true
         });
         console.log('Global options set');
-        
+
         // Then set it for the specific tab
         console.log('Setting tab-specific side panel options...');
         await chrome.sidePanel.setOptions({
@@ -151,10 +157,10 @@ async function openSidePanel(tabId) {
             enabled: true
         });
         console.log('Tab options set');
-        
+
         // Small delay to ensure options are set
         await new Promise(resolve => setTimeout(resolve, 200));
-        
+
         // Then open it
         console.log('Calling chrome.sidePanel.open({ tabId: ' + tabId + ' })');
         await chrome.sidePanel.open({ tabId });
@@ -166,7 +172,7 @@ async function openSidePanel(tabId) {
             stack: error.stack,
             name: error.name
         });
-        
+
         // Try opening globally as fallback
         try {
             console.log('Trying to open side panel globally (no tabId)...');

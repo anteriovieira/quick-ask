@@ -25,10 +25,10 @@ function init() {
 
     try {
         console.log('DeepAsk: Initializing...');
-    shadowHost = document.createElement('div');
-    shadowHost.id = 'deepask-host';
-    document.body.appendChild(shadowHost);
-    shadowRoot = shadowHost.attachShadow({ mode: 'open' });
+        shadowHost = document.createElement('div');
+        shadowHost.id = 'deepask-host';
+        document.body.appendChild(shadowHost);
+        shadowRoot = shadowHost.attachShadow({ mode: 'open' });
 
         // Inject styles directly (more reliable than external link)
         const style = document.createElement('style');
@@ -37,7 +37,7 @@ function init() {
         const accentBlue = isDarkMode ? '#8ab4f8' : '#1a73e8';
         const accentBlueHover = isDarkMode ? '#aecbfa' : '#1557b0';
         const textOnAccent = isDarkMode ? '#202124' : '#ffffff';
-        
+
         style.textContent = `
           .deepask-reset {
             all: initial;
@@ -91,56 +91,7 @@ function init() {
             white-space: nowrap;
             letter-spacing: 0.01em;
           }
-          .deepask-api-message {
-            position: fixed;
-            background: #1e293b;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            z-index: 2147483647;
-            padding: 16px;
-            min-width: 280px;
-            max-width: 320px;
-            animation: fadeIn 0.2s ease-out;
-          }
-          .deepask-api-content {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-          }
-          .deepask-api-icon {
-            font-size: 24px;
-            text-align: center;
-          }
-          .deepask-api-text {
-            text-align: center;
-          }
-          .deepask-api-title {
-            font-weight: 600;
-            font-size: 16px;
-            color: #f1f5f9;
-            margin-bottom: 4px;
-          }
-          .deepask-api-desc {
-            font-size: 14px;
-            color: #94a3b8;
-            line-height: 1.4;
-          }
-          .deepask-api-button {
-            width: 100%;
-            background: #6366f1;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 10px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s;
-          }
-          .deepask-api-button:hover {
-            background: #4f46e5;
-          }
+
         `;
         shadowRoot.appendChild(style);
 
@@ -150,7 +101,7 @@ function init() {
         document.addEventListener('selectionchange', handleSelectionChange, true);
         console.log('DeepAsk: Event listeners attached');
         console.log('DeepAsk: Initialization complete. Try selecting text on the page.');
-        
+
         // Listen for messages from side panel
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             if (request.action === 'getCurrentSelection') {
@@ -162,7 +113,7 @@ function init() {
                 return true;
             }
         });
-        
+
         // Add keyboard shortcut to open side panel when text is selected
         document.addEventListener('keydown', async (e) => {
             // Check for Ctrl+K (Windows/Linux) or Cmd+K (Mac)
@@ -173,36 +124,36 @@ function init() {
                     e.preventDefault();
                     currentSelection = text;
                     lastSelectionText = text;
-                    
+
                     // Check API key first
                     const { openaiApiKey } = await chrome.storage.sync.get('openaiApiKey');
                     if (!openaiApiKey || openaiApiKey.trim() === '') {
-                        showApiKeyRequiredMessage();
+                        chrome.runtime.sendMessage({ action: 'openOptionsPage' });
                         return;
                     }
-                    
+
                     await openSidePanel();
                     removeFloatingButton();
                 }
             }
         }, true);
-        
-    document.addEventListener('mousedown', (e) => {
-        // Don't hide button if clicking on the button itself
-        if (e.target.closest('#deepask-host')) {
-            return;
-        }
-        
-        // Hide button if clicking outside (but not on the button itself)
-        if (floatingBtn && !chatBox) {
-            // Small delay to allow button click to register
-            setTimeout(() => {
-                if (floatingBtn && !chatBox) {
-            removeFloatingButton();
-                }
-            }, 200);
-        }
-    }, true);
+
+        document.addEventListener('mousedown', (e) => {
+            // Don't hide button if clicking on the button itself
+            if (e.target.closest('#deepask-host')) {
+                return;
+            }
+
+            // Hide button if clicking outside (but not on the button itself)
+            if (floatingBtn && !chatBox) {
+                // Small delay to allow button click to register
+                setTimeout(() => {
+                    if (floatingBtn && !chatBox) {
+                        removeFloatingButton();
+                    }
+                }, 200);
+            }
+        }, true);
     } catch (error) {
         console.error('DeepAsk initialization error:', error);
     }
@@ -255,13 +206,13 @@ function checkAndShowSelection() {
         // If it's a new selection, show floating button
         if (text !== lastSelectionText) {
             console.log('DeepAsk: New selection detected, showing button');
-        currentSelection = text;
+            currentSelection = text;
             lastSelectionText = text;
-            
+
             // Get the position of the selection to show button nearby
             try {
-        const range = selection.getRangeAt(0);
-        const rect = range.getBoundingClientRect();
+                const range = selection.getRangeAt(0);
+                const rect = range.getBoundingClientRect();
                 // Position button above the selection, slightly to the right
                 const buttonX = rect.right + window.scrollX;
                 const buttonY = rect.top + window.scrollY - 45;
@@ -301,7 +252,7 @@ function showFloatingButton(x, y) {
             <span class="deepask-btn-text">Ask AI</span>
         </div>
     `;
-    
+
     // Position the button near the selection
     floatingBtn.style.left = `${Math.min(x, window.innerWidth - 120)}px`;
     floatingBtn.style.top = `${Math.max(y, 10)}px`;
@@ -311,29 +262,29 @@ function showFloatingButton(x, y) {
         e.stopPropagation();
         e.preventDefault();
     });
-    
+
     floatingBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
         e.preventDefault();
         console.log('🔵 DeepAsk: Button clicked!');
         console.log('🔵 DeepAsk: Using stored selection:', currentSelection.substring(0, 50));
-        
+
         // Use the stored selection (don't check window.getSelection() as it may be cleared)
         if (!currentSelection || currentSelection.trim() === '') {
             console.error('❌ DeepAsk: No stored selection found!');
             return;
         }
-        
+
         // Check if API key is set
         const { openaiApiKey } = await chrome.storage.sync.get('openaiApiKey');
-        
+
         if (!openaiApiKey || openaiApiKey.trim() === '') {
-            console.log('DeepAsk: No API key found, showing message');
-            showApiKeyRequiredMessage();
+            console.log('DeepAsk: No API key found, opening settings');
+            chrome.runtime.sendMessage({ action: 'openOptionsPage' });
             removeFloatingButton();
             return;
         }
-        
+
         console.log('✅ DeepAsk: API key found, opening side panel with text:', currentSelection.substring(0, 50));
         // Send selected text to side panel and open it
         await openSidePanel();
@@ -341,7 +292,7 @@ function showFloatingButton(x, y) {
     });
 
     shadowRoot.appendChild(floatingBtn);
-    
+
     // Auto-hide button after a few seconds if not clicked
     setTimeout(() => {
         if (floatingBtn && !chatBox) {
@@ -357,75 +308,14 @@ function removeFloatingButton() {
     }
 }
 
-function showApiKeyRequiredMessage() {
-    // Remove any existing message
-    const existingMsg = shadowRoot.querySelector('.deepask-api-message');
-    if (existingMsg) {
-        existingMsg.remove();
-    }
 
-    const messageBox = document.createElement('div');
-    messageBox.className = 'deepask-api-message deepask-reset';
-    messageBox.innerHTML = `
-        <div class="deepask-api-content">
-            <div class="deepask-api-icon">⚠️</div>
-            <div class="deepask-api-text">
-                <div class="deepask-api-title">API Key Required</div>
-                <div class="deepask-api-desc">Please set your OpenAI API key to use Quick Ask.</div>
-            </div>
-            <button class="deepask-api-button">Open Settings</button>
-        </div>
-    `;
-
-    // Position near where button was, or center if button not available
-    if (floatingBtn) {
-        const buttonRect = floatingBtn.getBoundingClientRect();
-        const x = Math.min(buttonRect.left + window.scrollX, window.innerWidth - 320);
-        const y = Math.max(buttonRect.top + window.scrollY - 100, 20);
-        messageBox.style.left = `${x}px`;
-        messageBox.style.top = `${y}px`;
-    } else {
-        messageBox.style.left = '50%';
-        messageBox.style.top = '50%';
-        messageBox.style.transform = 'translate(-50%, -50%)';
-    }
-
-    shadowRoot.appendChild(messageBox);
-
-    // Handle settings button click
-    const settingsBtn = messageBox.querySelector('.deepask-api-button');
-    settingsBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        chrome.runtime.openOptionsPage();
-        messageBox.remove();
-    });
-
-    // Close when clicking outside the shadow host
-    const closeOnOutsideClick = (e) => {
-        if (!shadowHost.contains(e.target)) {
-            messageBox.remove();
-            document.removeEventListener('mousedown', closeOnOutsideClick);
-        }
-    };
-    setTimeout(() => {
-        document.addEventListener('mousedown', closeOnOutsideClick);
-    }, 100);
-
-    // Auto-remove after 8 seconds
-    setTimeout(() => {
-        if (messageBox.parentNode) {
-            messageBox.remove();
-            document.removeEventListener('mousedown', closeOnOutsideClick);
-        }
-    }, 8000);
-}
 
 async function openSidePanel() {
     console.log('DeepAsk: Opening side panel with selection:', currentSelection.substring(0, 50));
-    
+
     try {
         console.log('DeepAsk: Sending openSidePanel message to background script');
-        
+
         // Request background script to open side panel
         // The background script will get the tab ID from sender.tab.id
         chrome.runtime.sendMessage({ action: 'openSidePanel' }, (response) => {
@@ -434,15 +324,15 @@ async function openSidePanel() {
                 alert('Error opening side panel. Please check the console for details.');
                 return;
             }
-            
+
             console.log('✅ DeepAsk: Side panel opening response:', response);
-            
+
             if (response && response.error) {
                 console.error('❌ DeepAsk: Error from background:', response.error);
                 alert('Error opening side panel: ' + response.error);
                 return;
             }
-            
+
             // Send selected text to side panel after a delay to ensure it's open
             // Use a flag to prevent sending duplicate messages
             if (!window._deepAskTextSent) {
