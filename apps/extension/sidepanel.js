@@ -50,12 +50,14 @@ function init() {
 const DEFAULT_ACTIONS = [
     "Answer that",
     "Explain it",
-    "Translate",
     "Fix typo",
     "Summarize",
     "Make it shorter",
     "Make it longer"
 ];
+
+let customActions = [];
+const CUSTOM_ACTIONS_KEY = 'quickask_custom_actions';
 
 let hiddenActions = [];
 const HIDDEN_ACTIONS_KEY = 'quickask_hidden_actions';
@@ -78,6 +80,14 @@ function loadCustomActions() {
     }
 }
 
+function saveCustomActions() {
+    try {
+        localStorage.setItem(CUSTOM_ACTIONS_KEY, JSON.stringify(customActions));
+    } catch (error) {
+        console.error('Error saving custom actions:', error);
+    }
+}
+
 function saveHiddenActions() {
     try {
         localStorage.setItem(HIDDEN_ACTIONS_KEY, JSON.stringify(hiddenActions));
@@ -94,14 +104,32 @@ function setupAddCustomAction() {
 }
 
 function addCustomAction() {
-    const actionName = prompt("Enter the name for the new action:");
+    const actionName = questionInput.value;
+    console.log('addCustomAction called. Value:', actionName);
+
     if (actionName && actionName.trim()) {
         const trimmedName = actionName.trim();
-        if (!customActions.includes(trimmedName) && !DEFAULT_ACTIONS.includes(trimmedName)) {
-            customActions.push(trimmedName);
-            saveCustomActions();
-            renderQuickActions();
+        console.log('Trimmed name:', trimmedName);
+
+        // Check if action already exists (in custom or default)
+        if (customActions.includes(trimmedName) || DEFAULT_ACTIONS.includes(trimmedName)) {
+            console.warn('Action already exists:', trimmedName);
+            // Optional: Show some feedback that it already exists
+            return;
         }
+
+        console.log('Adding action:', trimmedName);
+        customActions.push(trimmedName);
+        saveCustomActions();
+        renderQuickActions();
+
+        // Clear input after adding
+        questionInput.value = '';
+        console.log('Input cleared');
+    } else {
+        console.log('Action name empty');
+        // Focus input if empty to encourage typing
+        questionInput.focus();
     }
 }
 
