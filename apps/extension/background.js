@@ -205,7 +205,18 @@ async function handleAskAI(request, sendResponse) {
             return;
         }
 
-        const finalSystemPrompt = systemPrompt || 'You are a helpful assistant. The user will provide a text selection and a question about it. Answer the question based on the text provided, but you can also use your general knowledge if needed. Be concise.';
+        let finalSystemPrompt = systemPrompt || 'You are a helpful assistant. The user will provide a text selection and a question about it. Answer the question based on the text provided, but you can also use your general knowledge if needed. Be concise.';
+
+        // Append page context if available
+        if (request.pageTitle || request.pageDescription) {
+            finalSystemPrompt += '\n\nContext from the current page:';
+            if (request.pageTitle) {
+                finalSystemPrompt += `\nTitle: ${request.pageTitle}`;
+            }
+            if (request.pageDescription) {
+                finalSystemPrompt += `\nDescription: ${request.pageDescription}`;
+            }
+        }
 
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',

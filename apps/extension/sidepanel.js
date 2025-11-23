@@ -37,7 +37,10 @@ function init() {
             const isChatEmpty = !chat || chat.messages.length === 0;
 
             if (request.text && (request.text !== lastHandledText || isChatEmpty)) {
-                handleTextSelected(request.text);
+                handleTextSelected(request.text, {
+                    title: request.pageTitle,
+                    description: request.pageDescription
+                });
             }
             sendResponse({ success: true });
         }
@@ -260,12 +263,13 @@ function saveChats() {
     }
 }
 
-function createNewChat(initialText = '') {
+function createNewChat(initialText = '', pageContext = {}) {
     const newChat = {
         id: `chat_${Date.now()}`,
         title: 'New Chat',
         messages: [],
         selectedText: initialText,
+        pageContext: pageContext,
         createdAt: Date.now(),
         updatedAt: Date.now()
     };
@@ -446,7 +450,7 @@ function checkForExistingSelection() {
     });
 }
 
-function handleTextSelected(text) {
+function handleTextSelected(text, pageContext = {}) {
     // Update last handled text
     lastHandledText = text;
     currentSelection = text;
@@ -454,13 +458,14 @@ function handleTextSelected(text) {
     // Create new chat if none exists or if current chat already has messages
     const chat = chats.find(c => c.id === activeChat);
     if (!chat || chat.messages.length > 0) {
-        createNewChat(text);
+        createNewChat(text, pageContext);
     }
 
     // Update current chat
     const currentChat = chats.find(c => c.id === activeChat);
     if (currentChat) {
         currentChat.selectedText = text;
+        currentChat.pageContext = pageContext;
         currentChat.updatedAt = Date.now();
 
         // Clear empty state
@@ -549,10 +554,15 @@ async function sendMessage() {
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
     try {
+        const chat = chats.find(c => c.id === activeChat);
+        const pageContext = chat ? chat.pageContext : {};
+
         const response = await chrome.runtime.sendMessage({
             action: 'askAI',
             text: currentSelection,
-            question: question
+            question: question,
+            pageTitle: pageContext?.title,
+            pageDescription: pageContext?.description
         });
 
         // Remove loading

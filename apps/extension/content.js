@@ -195,6 +195,12 @@ function handleSelectionChange() {
     }, 150);
 }
 
+function getPageContext() {
+    const title = document.title || '';
+    const metaDescription = document.querySelector('meta[name="description"]')?.content || '';
+    return { title, description: metaDescription };
+}
+
 function checkAndShowSelection() {
     const selection = window.getSelection();
     const text = selection.toString().trim();
@@ -340,9 +346,12 @@ async function openSidePanel() {
 
                 const sendTextToSidePanel = (retries = 3) => {
                     console.log(`DeepAsk: Sending selected text to side panel (retries left: ${retries})`);
+                    const pageContext = getPageContext();
                     chrome.runtime.sendMessage({
                         action: 'textSelected',
-                        text: currentSelection
+                        text: currentSelection,
+                        pageTitle: pageContext.title,
+                        pageDescription: pageContext.description
                     }, (response) => {
                         if (chrome.runtime.lastError) {
                             console.error('DeepAsk: Error sending text to side panel:', chrome.runtime.lastError);
@@ -422,10 +431,13 @@ function openChatBox() {
         const loadingId = appendMessage('Thinking...', 'ai');
 
         try {
+            const pageContext = getPageContext();
             const response = await chrome.runtime.sendMessage({
                 action: 'askAI',
                 text: currentSelection,
-                question: question
+                question: question,
+                pageTitle: pageContext.title,
+                pageDescription: pageContext.description
             });
 
             // Remove loading and add response
