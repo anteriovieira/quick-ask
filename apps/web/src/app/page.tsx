@@ -1,4 +1,5 @@
 import { BrowserSimulation } from "@/components/browser-simulation"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -160,12 +161,7 @@ export default function Home() {
 
       <footer className="bg-muted/50 py-12 border-t">
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-2 font-bold text-lg">
-            <div className="w-6 h-6 rounded bg-primary flex items-center justify-center text-primary-foreground">
-              <Sparkles className="w-3 h-3" />
-            </div>
-            QuickAsk
-          </div>
+          <ThemeToggle />
           <div className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} QuickAsk. Open Source under MIT License.
           </div>
