@@ -1,0 +1,43 @@
+{
+    "Hero": {
+        "version": "v1.0.0 já está disponível",
+        "title": "Seu Assistente de IA,",
+        "subtitle": "A um clique de distância",
+        "description": "Selecione qualquer texto, faça perguntas e obtenha respostas instantâneas sem sair da sua aba atual. A maneira mais simples de integrar IA ao seu fluxo de navegação.",
+        "cta": "Adicionar ao Chrome"
+    },
+    "Navigation": {
+        "features": "Funcionalidades",
+        "howItWorks": "Como Funciona",
+        "github": "GitHub",
+        "starOnGithub": "Estrela no GitHub",
+        "addToChrome": "Adicionar ao Chrome"
+    },
+    "Features": {
+        "title": "Projetado para Velocidade e Contexto",
+        "description": "O QuickAsk não é apenas mais um chatbot. Ele está profundamente integrado à sua experiência de navegação, entendendo o contexto do que você está lendo.",
+        "selectAndAsk": {
+            "title": "Selecione e Pergunte",
+            "description": "Não precisa copiar e colar em outra aba. Basta selecionar o texto sobre o qual você tem curiosidade e perguntar. O QuickAsk entende o contexto imediatamente."
+        },
+        "lightningFast": {
+            "title": "Rápido como um Raio",
+            "description": "Construído para desempenho. O painel lateral abre instantaneamente, e as respostas em streaming significam que você nunca precisa esperar a resposta completa aparecer."
+        },
+        "privateAndSecure": {
+            "title": "Privado e Seguro",
+            "description": "Suas chaves de API são armazenadas localmente no seu dispositivo. Não rastreamos suas consultas nem armazenamos seus dados em nossos servidores."
+        }
+    },
+    "CTA": {
+        "title": "Pronto para melhorar sua navegação?",
+        "description": "Junte-se a milhares de usuários que estão economizando tempo e aprendendo mais rápido com o QuickAsk. Código aberto e gratuito para usar.",
+        "button": "Adicionar ao Chrome - É Grátis"
+    },
+    "Footer": {
+        "privacy": "Privacidade",
+        "terms": "Termos",
+        "twitter": "Twitter",
+        "copyright": "© {year} QuickAsk. Código Aberto sob Licença MIT."
+    }
+}

@@ -1,0 +1,43 @@
+{
+    "Hero": {
+        "version": "v1.0.0 is now available",
+        "title": "Your AI Assistant,",
+        "subtitle": "Just a Click Away",
+        "description": "Select any text, ask questions, and get instant answers without leaving your current tab. The most seamless way to integrate AI into your browsing workflow.",
+        "cta": "Add to Chrome"
+    },
+    "Navigation": {
+        "features": "Features",
+        "howItWorks": "How it Works",
+        "github": "GitHub",
+        "starOnGithub": "Star on GitHub",
+        "addToChrome": "Add to Chrome"
+    },
+    "Features": {
+        "title": "Designed for Speed & Context",
+        "description": "QuickAsk isn't just another chatbot. It's deeply integrated into your browsing experience, understanding the context of what you're reading.",
+        "selectAndAsk": {
+            "title": "Select & Ask",
+            "description": "No need to copy-paste into another tab. Just select the text you're curious about and ask away. QuickAsk understands the context immediately."
+        },
+        "lightningFast": {
+            "title": "Lightning Fast",
+            "description": "Built for performance. The side panel opens instantly, and streaming responses mean you never have to wait for the full answer to appear."
+        },
+        "privateAndSecure": {
+            "title": "Private & Secure",
+            "description": "Your API keys are stored locally on your device. We don't track your queries or store your data on our servers."
+        }
+    },
+    "CTA": {
+        "title": "Ready to upgrade your browsing?",
+        "description": "Join thousands of users who are saving time and learning faster with QuickAsk. Open source and free to use.",
+        "button": "Add to Chrome - It's Free"
+    },
+    "Footer": {
+        "privacy": "Privacy",
+        "terms": "Terms",
+        "twitter": "Twitter",
+        "copyright": "© {year} QuickAsk. Open Source under MIT License."
+    }
+}
