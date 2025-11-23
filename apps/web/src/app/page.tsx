@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles, Zap, Shield, MousePointerClick, Github, Chrome } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
+import Logo from "@/assets/logo.png"
 
 export default function Home() {
   return (
@@ -12,9 +14,7 @@ export default function Home() {
       <header className="border-b sticky top-0 bg-background/80 backdrop-blur-md z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 font-bold text-xl">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
-              <Sparkles className="w-5 h-5" />
-            </div>
+            <Image src={Logo} alt="QuickAsk Logo" width={32} height={32} className="w-8 h-8" />
             QuickAsk
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-muted-foreground">
