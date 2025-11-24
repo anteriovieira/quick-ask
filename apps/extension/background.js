@@ -23,6 +23,34 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     }
 });
 
+// Track side panel state
+let isSidePanelOpen = false;
+
+chrome.runtime.onConnect.addListener((port) => {
+    if (port.name === 'sidepanel') {
+        isSidePanelOpen = true;
+        broadcastSidePanelStatus(true);
+
+        port.onDisconnect.addListener(() => {
+            isSidePanelOpen = false;
+            broadcastSidePanelStatus(false);
+        });
+    }
+});
+
+function broadcastSidePanelStatus(isOpen) {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (tabs[0]) {
+            chrome.tabs.sendMessage(tabs[0].id, {
+                action: 'sidePanelStatus',
+                isOpen: isOpen
+            }).catch(() => {
+                // Ignore errors if content script is not ready
+            });
+        }
+    });
+}
+
 // Initialize side panel on install/startup
 chrome.runtime.onInstalled.addListener(async () => {
     try {
@@ -65,6 +93,13 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
                 enabled: true
             });
         }
+        // Send current side panel status to the activated tab
+        if (isSidePanelOpen) {
+            chrome.tabs.sendMessage(activeInfo.tabId, {
+                action: 'sidePanelStatus',
+                isOpen: true
+            }).catch(() => { });
+        }
     } catch (error) {
         // Ignore errors
     }
@@ -79,6 +114,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
                     path: 'sidepanel.html',
                     enabled: true
                 });
+            }
+            // Send current side panel status to the updated tab
+            if (isSidePanelOpen) {
+                chrome.tabs.sendMessage(tabId, {
+                    action: 'sidePanelStatus',
+                    isOpen: true
+                }).catch(() => { });
             }
         } catch (error) {
             // Ignore errors

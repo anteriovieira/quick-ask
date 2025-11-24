@@ -30,6 +30,7 @@ let chatBox = null;
 let currentSelection = '';
 let selectionTimeout = null;
 let lastSelectionText = '';
+let isSidePanelOpen = false;
 
 // Icons
 const SPARKLE_ICON = `<svg viewBox="0 0 24 24"><path d="M12 2L14.5 9L22 12L14.5 15L12 22L9.5 15L2 12L9.5 9L12 2Z" /></svg>`;
@@ -137,6 +138,14 @@ function init() {
                 // This is handled by side panel directly
                 return true;
             }
+            if (request.action === 'sidePanelStatus') {
+                console.log('DeepAsk: Side panel status changed:', request.isOpen);
+                isSidePanelOpen = request.isOpen;
+                if (isSidePanelOpen) {
+                    removeFloatingButton();
+                }
+                return true;
+            }
         });
 
         // Add keyboard shortcut to open side panel when text is selected
@@ -234,22 +243,34 @@ function checkAndShowSelection() {
 
     // Only proceed if we have text
     if (text.length > 0) {
-        // If it's a new selection, show floating button
+        // If it's a new selection
         if (text !== lastSelectionText) {
-            console.log('DeepAsk: New selection detected, showing button');
+            console.log('DeepAsk: New selection detected');
             currentSelection = text;
             lastSelectionText = text;
 
-            // Get the position of the selection to show button nearby
-            try {
-                const range = selection.getRangeAt(0);
-                const rect = range.getBoundingClientRect();
-                // Position button above the selection, slightly to the right
-                const buttonX = rect.right + window.scrollX;
-                const buttonY = rect.top + window.scrollY - 45;
-                showFloatingButton(buttonX, buttonY);
-            } catch (e) {
-                console.error('DeepAsk: Error getting selection position', e);
+            if (isSidePanelOpen) {
+                console.log('DeepAsk: Side panel is open, sending text directly');
+                const pageContext = getPageContext();
+                chrome.runtime.sendMessage({
+                    action: 'textSelected',
+                    text: currentSelection,
+                    pageTitle: pageContext.title,
+                    pageDescription: pageContext.description
+                });
+            } else {
+                console.log('DeepAsk: Side panel is closed, showing button');
+                // Get the position of the selection to show button nearby
+                try {
+                    const range = selection.getRangeAt(0);
+                    const rect = range.getBoundingClientRect();
+                    // Position button above the selection, slightly to the right
+                    const buttonX = rect.right + window.scrollX;
+                    const buttonY = rect.top + window.scrollY - 45;
+                    showFloatingButton(buttonX, buttonY);
+                } catch (e) {
+                    console.error('DeepAsk: Error getting selection position', e);
+                }
             }
         }
     } else if (text.length === 0) {

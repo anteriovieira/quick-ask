@@ -46,6 +46,9 @@ function init() {
     questionInput = document.getElementById('questionInput');
     sendBtn = document.getElementById('sendBtn');
 
+    // Establish connection to background script to track open state
+    chrome.runtime.connect({ name: 'sidepanel' });
+
     // Load chats from localStorage
     loadChats();
 
