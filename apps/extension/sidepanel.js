@@ -17,9 +17,15 @@ chrome.storage.sync.get({ debugMode: false }, (items) => {
 });
 
 // Listen for changes
+// Listen for changes
 chrome.storage.onChanged.addListener((changes, namespace) => {
-    if (namespace === 'sync' && changes.debugMode) {
-        updateDebugMode(changes.debugMode.newValue);
+    if (namespace === 'sync') {
+        if (changes.debugMode) {
+            updateDebugMode(changes.debugMode.newValue);
+        }
+        if (changes.openaiApiKey) {
+            checkApiKey();
+        }
     }
 });
 
@@ -53,6 +59,10 @@ function init() {
 
     // New chat buttons
     // setupNewChatButtons();
+
+    // Check API Key
+    checkApiKey();
+    setupSettingsButton();
 
     // Listen for messages from content script
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -649,4 +659,29 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
     init();
+}
+
+function checkApiKey() {
+    chrome.storage.sync.get('openaiApiKey', (data) => {
+        const apiKey = data.openaiApiKey;
+        const mainContent = document.getElementById('mainContent');
+        const apiKeyMissingState = document.getElementById('apiKeyMissingState');
+
+        if (apiKey) {
+            if (mainContent) mainContent.style.display = 'flex';
+            if (apiKeyMissingState) apiKeyMissingState.style.display = 'none';
+        } else {
+            if (mainContent) mainContent.style.display = 'none';
+            if (apiKeyMissingState) apiKeyMissingState.style.display = 'flex';
+        }
+    });
+}
+
+function setupSettingsButton() {
+    const openSettingsBtn = document.getElementById('openSettingsBtn');
+    if (openSettingsBtn) {
+        openSettingsBtn.addEventListener('click', () => {
+            chrome.runtime.openOptionsPage();
+        });
+    }
 }

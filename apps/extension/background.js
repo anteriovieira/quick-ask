@@ -156,6 +156,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
+// Open side panel when extension icon is clicked
+chrome.action.onClicked.addListener((tab) => {
+    // Open the side panel for the current window
+    chrome.sidePanel.open({ windowId: tab.windowId });
+});
+
 async function openSidePanel(tabId) {
     try {
         console.log('=== Opening side panel for tab:', tabId);

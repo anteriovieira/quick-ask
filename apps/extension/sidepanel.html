@@ -378,45 +378,113 @@
         .content::-webkit-scrollbar-thumb:hover {
             background: var(--scrollbar-thumb-hover);
         }
+
+        .api-key-missing-state {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 32px;
+            height: 100%;
+        }
+
+        .api-key-missing-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            color: var(--accent-blue);
+        }
+
+        .api-key-missing-state h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .api-key-missing-state p {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            max-width: 280px;
+        }
+
+        .primary-btn {
+            background: var(--accent-blue);
+            color: var(--bg-primary);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .primary-btn:hover {
+            background: var(--accent-blue-hover);
+        }
+
+        #mainContent {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
     </style>
 </head>
 
 <body>
-    <div class="content" id="messages">
-        <div class="empty-state">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-            <h3>Select text to get started</h3>
-            <p>Select any text on the page and click "Ask AI" to start asking questions about it.</p>
+    <div class="api-key-missing-state" id="apiKeyMissingState">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        <h3>OpenAI API Key Required</h3>
+        <p>To use Quick Ask, you need to provide your OpenAI API key in the extension settings.</p>
+        <button class="primary-btn" id="openSettingsBtn">Open Settings</button>
+    </div>
+
+    <div id="mainContent">
+        <div class="content" id="messages">
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                <h3>Select text to get started</h3>
+                <p>Select any text on the page and click "Ask AI" to start asking questions about it.</p>
+            </div>
         </div>
-    </div>
-    <div class="quick-actions" id="quickActions">
-        <button class="quick-action-btn" data-action="Answer that">Answer that</button>
-        <button class="quick-action-btn" data-action="Explain it">Explain it</button>
-        <button class="quick-action-btn" data-action="Translate">Translate</button>
-        <button class="quick-action-btn" data-action="Fix typo">Fix typo</button>
-        <button class="quick-action-btn" data-action="Summarize">Summarize</button>
-        <button class="quick-action-btn" data-action="Make it shorter">Make it shorter</button>
-        <button class="quick-action-btn" data-action="Make it longer">Make it longer</button>
-    </div>
-    <div class="input-area">
-        <div class="input-wrapper">
-            <input type="text" class="input" id="questionInput" placeholder="Ask a question..." disabled>
-            <button class="input-icon-btn" id="addCustomActionBtn" title="Add custom action">
-                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-            </button>
-            <button class="send-btn" id="sendBtn" disabled>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
-            </button>
+        <div class="quick-actions" id="quickActions">
+            <button class="quick-action-btn" data-action="Answer that">Answer that</button>
+            <button class="quick-action-btn" data-action="Explain it">Explain it</button>
+            <button class="quick-action-btn" data-action="Translate">Translate</button>
+            <button class="quick-action-btn" data-action="Fix typo">Fix typo</button>
+            <button class="quick-action-btn" data-action="Summarize">Summarize</button>
+            <button class="quick-action-btn" data-action="Make it shorter">Make it shorter</button>
+            <button class="quick-action-btn" data-action="Make it longer">Make it longer</button>
+        </div>
+        <div class="input-area">
+            <div class="input-wrapper">
+                <input type="text" class="input" id="questionInput" placeholder="Ask a question..." disabled>
+                <button class="input-icon-btn" id="addCustomActionBtn" title="Add custom action">
+                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+                <button class="send-btn" id="sendBtn" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 
