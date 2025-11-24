@@ -62,7 +62,10 @@ function init() {
 
     // Check API Key
     checkApiKey();
+    // Check API Key
+    checkApiKey();
     setupSettingsButton();
+    setupHeaderSettings();
 
     // Listen for messages from content script
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -681,6 +684,15 @@ function setupSettingsButton() {
     const openSettingsBtn = document.getElementById('openSettingsBtn');
     if (openSettingsBtn) {
         openSettingsBtn.addEventListener('click', () => {
+            chrome.runtime.openOptionsPage();
+        });
+    }
+}
+
+function setupHeaderSettings() {
+    const headerSettingsBtn = document.getElementById('headerSettingsBtn');
+    if (headerSettingsBtn) {
+        headerSettingsBtn.addEventListener('click', () => {
             chrome.runtime.openOptionsPage();
         });
     }
