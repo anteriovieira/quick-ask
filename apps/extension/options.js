@@ -6,6 +6,7 @@ const DEFAULT_SYSTEM_PROMPT = 'You are a helpful assistant. The user will provid
 function saveOptions() {
   const apiKey = document.getElementById('apiKey').value;
   const systemPrompt = document.getElementById('systemPrompt').value;
+  const debugMode = document.getElementById('debugMode').checked;
   const status = document.getElementById('status');
 
   if (!apiKey) {
@@ -16,7 +17,8 @@ function saveOptions() {
   chrome.storage.sync.set(
     {
       openaiApiKey: apiKey,
-      systemPrompt: systemPrompt
+      systemPrompt: systemPrompt,
+      debugMode: debugMode
     },
     () => {
       showStatus('Settings saved successfully!', 'success');
@@ -31,11 +33,13 @@ function restoreOptions() {
   chrome.storage.sync.get(
     {
       openaiApiKey: '',
-      systemPrompt: DEFAULT_SYSTEM_PROMPT
+      systemPrompt: DEFAULT_SYSTEM_PROMPT,
+      debugMode: false
     },
     (items) => {
       document.getElementById('apiKey').value = items.openaiApiKey;
       document.getElementById('systemPrompt').value = items.systemPrompt;
+      document.getElementById('debugMode').checked = items.debugMode;
     }
   );
 }

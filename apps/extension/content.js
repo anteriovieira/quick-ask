@@ -1,3 +1,28 @@
+// Debug mode logic
+const originalConsoleLog = console.log;
+let debugMode = false;
+
+function updateDebugMode(enabled) {
+    debugMode = enabled;
+    if (debugMode) {
+        console.log = originalConsoleLog;
+    } else {
+        console.log = () => { };
+    }
+}
+
+// Initialize debug mode
+chrome.storage.sync.get({ debugMode: false }, (items) => {
+    updateDebugMode(items.debugMode);
+});
+
+// Listen for changes
+chrome.storage.onChanged.addListener((changes, namespace) => {
+    if (namespace === 'sync' && changes.debugMode) {
+        updateDebugMode(changes.debugMode.newValue);
+    }
+});
+
 let shadowHost = null;
 let shadowRoot = null;
 let floatingBtn = null;
