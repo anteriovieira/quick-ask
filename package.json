@@ -7,6 +7,9 @@
   ],
   "scripts": {
     "dev": "npm run dev --workspaces",
-    "build": "npm run build --workspaces"
+    "build": "npm run build --workspaces",
+    "bump:extension": "npm run bump --workspace=apps/extension",
+    "package:extension": "npm run package --workspace=apps/extension",
+    "done": "npm run bump:extension && npm run package:extension"
   }
 }
